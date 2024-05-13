@@ -1,14 +1,18 @@
 import Button from "components/Button";
 import Input from "components/Input";
+import Select, { SelectOption } from "components/Select";
 import Textarea from "components/Textarea";
 import useNameValidation from "hooks/useNameValidation";
 import usePhoneValidation from "hooks/usePhoneValidation";
 import { useState } from "react";
 import styled from "styled-components";
 
+type Gender = "M" | "W";
+
 interface Info {
   name: string;
   phone: string;
+  gender: Gender;
   note: string;
 }
 
@@ -21,13 +25,19 @@ const FormSection = styled.section`
 `;
 
 const DEFAULT_CONSULTING_INFO = {
-  inboundSource: "",
   name: "",
   phone: "",
-  placeName: "",
+  gender: "M" as Gender,
   note: "",
-  agreement: false,
 };
+
+const GENDER_OPTIONS: SelectOption[] = [
+  { value: "M", label: "남자" },
+  {
+    value: "W",
+    label: "여자",
+  },
+];
 
 export default function RegistrationForm() {
   const [info, setInfo] = useState<Info>(DEFAULT_CONSULTING_INFO);
@@ -58,6 +68,12 @@ export default function RegistrationForm() {
         errorMessage="올바른 휴대폰 번호를 입력해주세요"
         value={phone}
         onChange={({ target }) => setPhone(target.value)}
+      />
+      <Select
+        label="성별"
+        options={GENDER_OPTIONS}
+        value={info.gender}
+        onChange={({ target }) => handleChange("gender", target.value)}
       />
       <Textarea
         label="특이사항"
