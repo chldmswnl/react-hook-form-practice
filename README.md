@@ -184,3 +184,75 @@ return (
   </FormSection>
 );
 ```
+
+### 기존 Input component 코드 리팩토링
+
+기존 스타일링이 되어 있는 Input 컴포넌트에서 props로 register를 받아 재사용할 수 있는 컴포넌트로 리팩토링 해봤다.
+
+```tsx
+// 기존 타입
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  icon?: React.ReactNode;
+  label?: string;
+  error?: boolean;
+  errorMessage?: string;
+  fill?: boolean;
+}
+
+// 수정 타입
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  icon?: React.ReactNode;
+  label?: string;
+  error?: FieldError | boolean;
+  errorMessage?: string;
+  register?: UseFormRegisterReturn;
+  fill?: boolean;
+}
+```
+
+수정 된 점은 register props 타입을 새로 추가했고 error타입을 FieldError 혹은 boolean 타입 중에 하나인 유니온 타입으로 수정했다.
+FieldError같은 경우 react-hook-form의 errors객체 타입 대응을 위한거고 boolean타입은 앞에 말한 상황을 제외한 일반적인 상황을 대응하기 위해 추가했다.
+
+```tsx
+export default function Input({
+  label,
+  icon,
+  error,
+  errorMessage,
+  register,
+  fill,
+  ...props
+}: InputProps) {
+  return (
+    <InputWrapper $fill={fill}>
+      {label && <StyledLabel>{label}</StyledLabel>}
+      <Wrapper>
+        {icon && icon}
+        <StyledInput {...register} {...props} />
+      </Wrapper>
+      {error && <ErrorMessage>{errorMessage}</ErrorMessage>}
+    </InputWrapper>
+  );
+}
+```
+
+input component 코드의 바뀐점은 register라는 props추가와 input컴포넌트에 register props를 스프레드 연산자로 받아오는것이다.
+react-hook-form은 비제어 컴포넌트이기 때문에 자체적으로 input을 조작하는 코드가 register에 포함되어 있어 스프레드 연산자로 받아왔고 추가적인 props대응을 위해 register뒤에 props를 제거하지 않고 그대로 두었다.
+
+실제 사용은 아래와 같은 코드로 할 수 있고, 재사용성을 극대화 할 수 있다.
+
+```tsx
+<Input
+  label="성명"
+  error={errors.name}
+  errorMessage={errors.name?.message}
+  register={register("name", {
+    required: { value: true, message: "이름은 필수값입니다." },
+    maxLength: { value: 50, message: "이름은 1자이상 50자 이하입니다." },
+    pattern: {
+      value: /^[가-힣a-zA-Z]+(?:\s[가-힣a-zA-Z]+)*$/,
+      message: "알맞지 않은 이름 형식입니다.",
+    },
+  })}
+/>
+```
