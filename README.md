@@ -1,30 +1,64 @@
-# React + TypeScript + Vite
+# react-hook-form 사용해보기
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 필드 소개 및 조건
 
-Currently, two official plugins are available:
+#### 이름
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 필수
+- 유효성 검사 필요
 
-## Expanding the ESLint configuration
+#### 연락처
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- 필수
+- 유효성 검사 필요
 
-- Configure the top-level `parserOptions` property like this:
+#### 성별
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- 필수
+- 유효성 검사 필요
+
+#### 특이사항
+
+- 필수아님
+
+## 이전 코드
+
+- form 태그 사용하지 않음 (웹 접근성 문제발생)
+- 공통 컴포넌트 + 커스텀 훅 조합
+- 유효성 검사는 커스텀 훅에서 진행
+
+```tsx
+return (
+  <FormSection>
+    <Input
+      label="성명"
+      error={nameError}
+      errorMessage="올바른 성명을 입력해주세요"
+      value={info.name}
+      onChange={({ target }) => handleChange("name", target.value)}
+    />
+    <Input
+      label="연락처"
+      error={phoneError}
+      errorMessage="올바른 휴대폰 번호를 입력해주세요"
+      value={phone}
+      onChange={({ target }) => setPhone(target.value)}
+    />
+    <Select
+      label="성별"
+      options={GENDER_OPTIONS}
+      value={info.gender}
+      onChange={({ target }) => handleChange("gender", target.value)}
+    />
+    <Textarea
+      label="특이사항"
+      value={info.note}
+      onChange={({ target }) => handleChange("note", target.value)}
+      maxLength={500}
+    />
+    <Button onClick={handleRegisterBtnClick}>등록하기</Button>
+  </FormSection>
+);
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## 이후 코드

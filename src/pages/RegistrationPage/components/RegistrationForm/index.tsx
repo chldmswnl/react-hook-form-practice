@@ -33,10 +33,7 @@ const DEFAULT_CONSULTING_INFO = {
 
 const GENDER_OPTIONS: SelectOption[] = [
   { value: "M", label: "남자" },
-  {
-    value: "W",
-    label: "여자",
-  },
+  { value: "W", label: "여자" },
 ];
 
 export default function RegistrationForm() {
