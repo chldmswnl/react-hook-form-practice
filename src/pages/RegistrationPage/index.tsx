@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import RegistrationForm from "./components/RegistrationForm";
+import LegacyRegistrationForm from "./components/RegistrationForm/legacy";
 
 const Layout = styled.section`
   display: flex;
@@ -12,7 +12,8 @@ const Layout = styled.section`
 export default function RegistrationPage() {
   return (
     <Layout>
-      <RegistrationForm />
+      {/* <RegistrationForm /> */}
+      <LegacyRegistrationForm />
     </Layout>
   );
 }
