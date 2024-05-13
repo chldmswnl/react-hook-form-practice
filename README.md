@@ -187,7 +187,7 @@ return (
 
 ### 기존 Input component 코드 리팩토링
 
-기존 스타일링이 되어 있는 Input 컴포넌트에서 props로 register를 받아 재사용할 수 있는 컴포넌트로 리팩토링 해봤다.
+기존 개발 + 스타일링이 되어 있는 Input 컴포넌트에서 props로 register를 받아 재사용할 수 있는 컴포넌트로 리팩토링 해봤다.
 
 ```tsx
 // 기존 타입
@@ -236,10 +236,10 @@ export default function Input({
 }
 ```
 
-input component 코드의 바뀐점은 register라는 props추가와 input컴포넌트에 register props를 스프레드 연산자로 받아오는것이다.
+input component 코드의 바뀐점은 register라는 props추가와 input 태그에 register props를 스프레드 연산자로 받아오는것이다.
 react-hook-form은 비제어 컴포넌트이기 때문에 자체적으로 input을 조작하는 코드가 register에 포함되어 있어 스프레드 연산자로 받아왔고 추가적인 props대응을 위해 register뒤에 props를 제거하지 않고 그대로 두었다.
 
-실제 사용은 아래와 같은 코드로 할 수 있고, 재사용성을 극대화 할 수 있다.
+실제 사용은 아래와 같은 코드로 할 수 있고, 재사용성을 극대화 할 수 있었다.
 
 ```tsx
 <Input
@@ -256,3 +256,14 @@ react-hook-form은 비제어 컴포넌트이기 때문에 자체적으로 input�
   })}
 />
 ```
+
+## 기존 코드와 관련해서 react-hook-form이 좋았던 점
+
+### 한눈에 보이는 리렌더링 효과와 상태관리 최소화
+
+react-hook-form을 사용한 컴포넌트를 개발자도구 Profiler을 사용해서 확인한 결과 에러메세지가 변화할때를 제외하고는 리렌더링이 발생하지 않는 것을 확인할 수 있었다. 성능과 직결된 리렌더링과 관련해서 이러한 기능을 제공한다니.. react-hook-form을 사용하지 않을 이유가 없었다.
+
+그렇다면 이유를 살펴보자.
+react-hook-form이 이렇게 리렌더링을 최소화 할 수 있었던 것은 '비제어 컴포넌트'를 사용하고 있다고 나와있다. 비제어 컴포넌트란 React에 의해 값이 제어되지 않는 컴포넌트를 의미한다. React의 렌더링 조건 몇 가지 중 하나인 상태의 변화를 추적하지 않는 방식을 사용하기 때문에 리렌더링이 발생하지 않는 것은 당연하다. 우리는 그저 입력한 값에 대해 버튼을 눌렀을 때 받아오면 되는 것이다. 그렇기 때문에 이전 코드에서 확인할 수 있었던 useState를 사용한 상태관리를 하지 않아도 되는 것도 react-hook-form을 사용하는 이유 중 하나다.
+
+또한 개인적으로 느꼈던 장점 중에 하나는 표준화 된 유효성 검사 규칙을 사용한다는 것이다 ( [Apply validation](https://react-hook-form.com/get-started#Applyvalidation) ). custom hook을 사용해서 자체적으로 유효성 검사 로직을 작성하는 것보다는 약속 된 규칙에 따라 작성할 수 있다는 것이 협업과 유지보수면에서 장점이라고 생각한다.
